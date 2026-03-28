@@ -27,9 +27,9 @@ DEBUG = True
 
 
 import os
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-if os.environ.get('CODESPACE_NAME'):
-    ALLOWED_HOSTS.append(f"{os.environ.get('CODESPACE_NAME')}-8000.app.github.dev")
+
+# Allow all hosts for development
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -44,37 +44,31 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'djongo',
-    # Add your app here if needed
+    'octofit_tracker',
 ]
 
-MONGODB_DATABASES = {
-    "default": {
-        "ENGINE": "djongo",
-        "NAME": os.environ.get("MONGO_DB_NAME", "octofit_db"),
-        "ENFORCE_SCHEMA": False,
-        "CLIENT": {
-            "host": os.environ.get("MONGO_HOST", "mongodb://localhost:27017"),
+
+# Djongo/MongoDB database config
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'octofit_db',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb://localhost:27017',
         },
     }
 }
 
-DATABASES = MONGODB_DATABASES
 
 # CORS settings
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['*']
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -105,15 +99,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'octofit_tracker.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# Removed default SQLite DB config; using Djongo/MongoDB above
 
 
 # Password validation
@@ -156,3 +143,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Use custom user model
+AUTH_USER_MODEL = 'octofit_tracker.User'
