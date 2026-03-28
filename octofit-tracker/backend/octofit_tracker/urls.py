@@ -27,7 +27,14 @@ router.register(r'workouts', views.WorkoutViewSet)
 router.register(r'leaderboard', views.LeaderboardViewSet)
 
 def api_root(request):
+    import os
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    if codespace_name:
+        api_url = f"https://{codespace_name}-8000.app.github.dev/api/"
+    else:
+        api_url = "http://localhost:8000/api/"
     return JsonResponse({
+        "api_root": api_url,
         "message": "Welcome to the Octofit Tracker API root."
     })
 
